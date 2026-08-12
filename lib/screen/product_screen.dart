@@ -1,6 +1,6 @@
 import 'package:dummyjson/model/data_model.dart';
 import 'package:dummyjson/services/product_service.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:dummyjson/widget/product_card.dart';
 import 'package:flutter/material.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -108,57 +108,7 @@ class _ProductScreenState extends State<ProductScreen> {
         itemCount: _products.length,
         itemBuilder: (context, index) {
           final product = _products[index];
-          return Card(
-            elevation: 3,
-            shadowColor: Colors.black.withOpacity(0.15),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Colors.grey.shade300,
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    child: Image.network(
-                      product.thumbnail,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text(
-                    product.title,
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                  child: Text(
-                    "\$${product.price}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: CupertinoColors.systemRed,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
+          return ProductCard(product: product,);
         },
       );
     }

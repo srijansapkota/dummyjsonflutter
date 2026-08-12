@@ -1,4 +1,4 @@
-import 'package:dummyjson/screen/product_screen.dart';
+import 'package:dummyjson/screen/main_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Dummy Json with Flutter',
-      home: const ProductScreen(),
+      home: const MainScreen(),
     );
   }
 }
