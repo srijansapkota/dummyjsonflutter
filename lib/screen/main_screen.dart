@@ -28,6 +28,7 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Products"),
           BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: "Cart"),
         ],
+        selectedItemColor: Colors.amber[800],
         onTap: (index){
           setState(() {
                       _currentIndex = index;
