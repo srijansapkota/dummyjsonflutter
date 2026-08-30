@@ -91,8 +91,7 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   Widget build(BuildContext context) {
     Widget bodyContent;
-    if (_isLoading) {
-      bodyContent = const Center(child: CircularProgressIndicator());
+    if (_isLoading) {      bodyContent = const Center(child: CircularProgressIndicator());
     } else if (_hasError) {
       bodyContent = const Center(child: Text("Something went wrong"));
     } else {
