@@ -1,5 +1,4 @@
-import 'package:dummyjson/model/data_model.dart';
-import 'package:dummyjson/services/product_service.dart';
+import 'package:dummyjson/controllers/product_controller.dart';
 import 'package:dummyjson/widget/product_card.dart';
 import 'package:flutter/material.dart';
 
@@ -10,15 +9,9 @@ class ProductScreen extends StatefulWidget {
 }
 
 class _ProductScreenState extends State<ProductScreen> {
-  final ProductService _productService = ProductService();
-  List<Product> _products = [];
-  bool _isLoading = false;
-  bool _hasError = false;
+  final ProductController _controller = ProductController();
   final ScrollController _scrollController = ScrollController();
-  final int _limit = 10;
-  int _skip = 0;
-  bool _isLoadingMore = false;
-  bool _hasMore = true;
+
   @override
   void initState() {
     super.initState();
@@ -26,9 +19,25 @@ class _ProductScreenState extends State<ProductScreen> {
     _scrollController.addListener(_onScroll);
   }
 
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fetchProducts() async {
+    await _controller.fetchProducts();
+    setState(() {});
+  }
+
+  Future<void> _loadMoreProducts() async {
+    await _controller.loadMoreProducts();
+    setState(() {});
+  }
+
   void _onScroll() {
-    if (_hasMore &&
-        !_isLoadingMore &&
+    if (_controller.hasMore &&
+        !_controller.isLoadingMore &&
         _scrollController.position.maxScrollExtent -
                 _scrollController.position.pixels <
             200) {
@@ -36,64 +45,16 @@ class _ProductScreenState extends State<ProductScreen> {
     }
   }
 
-  Future<void> _loadMoreProducts() async {
-    setState(() {
-      _isLoadingMore = true;
-    });
-
-    try {
-      final newProducts = await _productService.fetchProducts(
-        limit: _limit,
-        skip: _limit + _skip,
-      );
-      setState(() {
-        _products.addAll(newProducts);
-        _skip += _limit;
-        if (newProducts.length < _limit) {
-          _hasMore = false;
-        }
-      });
-    } catch (e) {
-      print(e);
-    } finally {
-      setState(() {
-        _isLoadingMore = false;
-      });
-    }
-  }
-
-  Future<void> _fetchProducts() async {
-    setState(() {
-      _isLoading = true;
-      _hasError = false;
-    });
-
-    try {
-      final products = await _productService.fetchProducts(
-        limit: _limit,
-        skip: _skip,
-      );
-      setState(() {
-        _products = products;
-        _hasError = false;
-      });
-    } catch (e) {
-      setState(() {
-        _hasError = true;
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     Widget bodyContent;
-    if (_isLoading) {      bodyContent = const Center(child: CircularProgressIndicator());
-    } else if (_hasError) {
+    
+    if (_controller.isLoading) {
+      bodyContent = const Center(child: CircularProgressIndicator());
+    } else if (_controller.hasError) {
       bodyContent = const Center(child: Text("Something went wrong"));
+    } else if (_controller.products.isEmpty) {
+      bodyContent = const Center(child: Text("No products found"));
     } else {
       bodyContent = GridView.builder(
         controller: _scrollController,
@@ -104,20 +65,30 @@ class _ProductScreenState extends State<ProductScreen> {
           mainAxisSpacing: 12,
           childAspectRatio: 0.65,
         ),
-        itemCount: _products.length,
+        itemCount: _controller.products.length + 
+            (_controller.isLoadingMore ? 1 : 0),
         itemBuilder: (context, index) {
-          final product = _products[index];
-          return ProductCard(product: product,);
+          if (index == _controller.products.length) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final product = _controller.products[index];
+          return ProductCard(product: product);
         },
       );
     }
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Dummy Json Product Fetch",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        actions: [IconButton(onPressed: () => {}, icon: Icon(Icons.search))],
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.search),
+          )
+        ],
       ),
       body: SafeArea(child: bodyContent),
     );
