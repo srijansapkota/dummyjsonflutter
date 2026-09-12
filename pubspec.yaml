@@ -38,6 +38,7 @@ dependencies:
   dio: ^5.11.1
   flutter_secure_storage: ^11.1.0
   jwt_decoder: ^2.0.1
+  provider: ^6.1.5+1
 
 dev_dependencies:
   flutter_test:
