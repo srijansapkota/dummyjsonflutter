@@ -1,7 +1,6 @@
 import 'package:dummyjson/screen/cart_screen.dart';
-import 'package:dummyjson/screen/login_screen.dart';
 import 'package:dummyjson/screen/product_screen.dart';
-import 'package:dummyjson/services/auth_provider.dart';
+import 'package:dummyjson/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,12 +14,7 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
   Future<void> _logout() async {
-    await context.read<AuthProvider>().logout();
-    if (!mounted) return;
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
-      (route) => false,
-    );
+    await context.read<AuthService>().logout();
   }
 
   @override

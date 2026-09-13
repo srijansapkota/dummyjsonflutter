@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../controllers/login_controller.dart';
-import '../services/auth_provider.dart';
-import 'main_screen.dart';
+import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,11 +13,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final LoginController _controller = LoginController();
 
   bool _isPasswordVisible = false;
-  bool _isLoading = false;
-  String? _errorMessage;
 
   @override
   void dispose() {
@@ -31,34 +26,17 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    final authProvider = context.read<AuthProvider>();
-    final success = await _controller.login(
+    final authService = context.read<AuthService>();
+    await authService.login(
       username: _usernameController.text.trim(),
       password: _passwordController.text,
-      authProvider: authProvider,
     );
-
-    if (!mounted) return;
-
-    setState(() {
-      _isLoading = false;
-      _errorMessage = success ? null : _controller.errorMessage;
-    });
-
-    if (success) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const MainScreen()),
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authService = context.watch<AuthService>();
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -146,25 +124,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
                 const SizedBox(height: 24),
-                if (_errorMessage != null)
+                if (authService.errorMessage != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16),
                     child: Text(
-                      _errorMessage!,
+                      authService.errorMessage!,
                       style: const TextStyle(color: Colors.red),
                     ),
                   ),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _submit,
+                    onPressed: authService.isLoading ? null : _submit,
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: _isLoading
+                    child: authService.isLoading
                         ? const SizedBox(
                             height: 20,
                             width: 20,
