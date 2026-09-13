@@ -1,6 +1,6 @@
 import 'package:dummyjson/screen/login_screen.dart';
 import 'package:dummyjson/screen/main_screen.dart';
-import 'package:dummyjson/services/auth_provider.dart';
+import 'package:dummyjson/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +14,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => AuthProvider(),
+      create: (context) {
+        final service = AuthService();
+        service.tryAutoLogin();
+        return service;
+      },
       child: MaterialApp(
         title: 'Dummy Json with Flutter',
         home: const AuthGate(),
@@ -23,38 +27,19 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class AuthGate extends StatefulWidget {
+class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 
   @override
-  State<AuthGate> createState() => _AuthGateState();
-}
-
-class _AuthGateState extends State<AuthGate> {
-  bool _checkingAuth = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkAuth();
-  }
-
-  Future<void> _checkAuth() async {
-    await context.read<AuthProvider>().tryAutoLogin();
-    if (mounted) {
-      setState(() => _checkingAuth = false);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (_checkingAuth) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+    final authService = context.watch<AuthService>();
+
+    if (authService.isCheckingAuth) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    final isAuthenticated = context.watch<AuthProvider>().isAuthenticated;
-    return isAuthenticated ? const MainScreen() : const LoginScreen();
+    return authService.isAuthenticated
+        ? const MainScreen()
+        : const LoginScreen();
   }
 }
