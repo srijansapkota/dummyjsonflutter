@@ -28,9 +28,10 @@ class AuthService extends ChangeNotifier {
     errorMessage = null;
     notifyListeners();
 
+    http.Response response;
     try {
       final url = Uri.https("dummyjson.com", "/auth/login");
-      final response = await http.post(
+      response = await http.post(
         url,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
@@ -39,11 +40,28 @@ class AuthService extends ChangeNotifier {
           "expiresInMins": 30,
         }),
       );
+    } catch (e) {
+      isLoading = false;
+      errorMessage = "Couldn't reach the server. Check your connection.";
+      notifyListeners();
+      return false;
+    }
 
-      if (response.statusCode != 200) {
-        throw Exception("Invalid username or password");
-      }
+    if (response.statusCode == 401) {
+      isLoading = false;
+      errorMessage = "Invalid username or password";
+      notifyListeners();
+      return false;
+    }
 
+    if (response.statusCode != 200) {
+      isLoading = false;
+      errorMessage = "Server error (${response.statusCode}). Please try again.";
+      notifyListeners();
+      return false;
+    }
+
+    try {
       final loginModel = LoginModel.fromJson(jsonDecode(response.body));
 
       this.id = loginModel.id;
@@ -59,7 +77,8 @@ class AuthService extends ChangeNotifier {
       return true;
     } catch (e) {
       isLoading = false;
-      errorMessage = "Invalid username or password";
+      errorMessage = "Something went wrong on our end. This is a bug, not a login problem.";
+      debugPrint("Login succeeded but parsing/storage failed: $e");
       notifyListeners();
       return false;
     }
