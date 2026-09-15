@@ -1,5 +1,6 @@
 import 'package:dummyjson/screen/cart_screen.dart';
 import 'package:dummyjson/screen/product_screen.dart';
+import 'package:dummyjson/screen/profile_screen.dart';
 import 'package:dummyjson/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,8 @@ class _MainScreenState extends State<MainScreen> {
       body = ProductScreen();
     } else if (_currentIndex == 1) {
       body = CartScreen();
+    } else if (_currentIndex == 2) {
+      body = ProfileScreen();
     } else {
       body = ProductScreen();
     }
@@ -41,15 +44,19 @@ class _MainScreenState extends State<MainScreen> {
       body: body,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        items: const[
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Products"),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: "Cart"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: "Cart",
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.verified_user), label: "Profile")
         ],
         selectedItemColor: Colors.amber[800],
-        onTap: (index){
+        onTap: (index) {
           setState(() {
-                      _currentIndex = index;
-                    });
+            _currentIndex = index;
+          });
         },
       ),
     );
