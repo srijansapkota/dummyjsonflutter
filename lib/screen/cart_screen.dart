@@ -39,22 +39,27 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("My Cart"),
-      ),
-      body: cart == null
-          ? const Center(
-              child: CircularProgressIndicator(),
+      body: CustomScrollView(
+        slivers: [
+          const SliverAppBar(
+            title: Text("My cart"),
+            floating: true,
+            snap: true,
+          ),
+      cart == null
+          ? const SliverFillRemaining(
+              child: Center(child: CircularProgressIndicator()),
             )
           : cart!.products.isEmpty
-              ? const Center(
+              ? const SliverFillRemaining(
                   child: Text(
                     "Your cart is empty",
                     style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                 )
-              : ListView.builder(
+              : SliverPadding(
                   padding: const EdgeInsets.all(12),
+                  sliver: SliverList.builder(
                   itemCount: cart!.products.length,
                   itemBuilder: (context, index) {
                     final product = cart!.products[index];
@@ -117,6 +122,8 @@ class _CartScreenState extends State<CartScreen> {
                     );
                   },
                 ),
+      )],
+      ),
     );
   }
 }
