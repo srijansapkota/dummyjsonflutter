@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
       },
       child: MaterialApp(
         title: 'Dummy Json with Flutter',
+        debugShowCheckedModeBanner: false,
         home: const AuthGate(),
       ),
     );
