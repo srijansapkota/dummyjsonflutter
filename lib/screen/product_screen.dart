@@ -35,62 +35,78 @@ class _ProductScreenState extends State<ProductScreen> {
     setState(() {});
   }
 
-  void _onScroll() {
-    if (_controller.hasMore &&
-        !_controller.isLoadingMore &&
-        _scrollController.position.maxScrollExtent -
-                _scrollController.position.pixels <
-            200) {
-      _loadMoreProducts();
-    }
+ void _onScroll() {
+  if (_controller.hasMore &&
+      !_controller.isLoadingMore &&
+      _scrollController.position.maxScrollExtent -
+              _scrollController.position.pixels 
+        <  200) {
+    _loadMoreProducts();
   }
+}
 
   @override
   Widget build(BuildContext context) {
     Widget bodyContent;
-    
+
     if (_controller.isLoading) {
-      bodyContent = const Center(child: CircularProgressIndicator());
+      bodyContent = const SliverFillRemaining(
+        child: Center(child: CircularProgressIndicator()),
+      );
     } else if (_controller.hasError) {
-      bodyContent = const Center(child: Text("Something went wrong"));
+      bodyContent = const SliverFillRemaining(
+        child: Center(child: Text("Something went wrong")),
+      );
     } else if (_controller.products.isEmpty) {
-      bodyContent = const Center(child: Text("No products found"));
+      bodyContent = const SliverFillRemaining(
+        child: Center(child: Text("No products found")),
+      );
     } else {
-      bodyContent = GridView.builder(
-        controller: _scrollController,
+      bodyContent = SliverPadding(
         padding: const EdgeInsets.all(8),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 0.65,
+        sliver: SliverGrid.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 0.65,
+          ),
+          itemCount: _controller.products.length +
+              (_controller.isLoadingMore ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (index == _controller.products.length) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final product = _controller.products[index];
+            return ProductCard(product: product);
+          },
         ),
-        itemCount: _controller.products.length + 
-            (_controller.isLoadingMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index == _controller.products.length) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final product = _controller.products[index];
-          return ProductCard(product: product);
-        },
       );
     }
-    
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Dummy Json Product Fetch",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      body: SafeArea(
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            SliverAppBar(
+              title: const Text(
+                "Dummy Json Product Fetch",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              floating: true,
+              snap: true,
+              actions: [
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.search),
+                )
+              ],
+            ),
+            bodyContent,
+          ],
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.search),
-          )
-        ],
       ),
-      body: SafeArea(child: bodyContent),
     );
   }
 }
