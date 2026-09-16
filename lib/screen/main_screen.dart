@@ -1,6 +1,9 @@
 import 'package:dummyjson/screen/cart_screen.dart';
 import 'package:dummyjson/screen/product_screen.dart';
+import 'package:dummyjson/screen/profile_screen.dart';
+import 'package:dummyjson/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -10,6 +13,11 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+
+  Future<void> _logout() async {
+    await context.read<AuthService>().logout();
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget body;
@@ -17,22 +25,38 @@ class _MainScreenState extends State<MainScreen> {
       body = ProductScreen();
     } else if (_currentIndex == 1) {
       body = CartScreen();
+    } else if (_currentIndex == 2) {
+      body = ProfileScreen();
     } else {
       body = ProductScreen();
     }
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Dummy Json with Flutter"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: _logout,
+            tooltip: "Log out",
+          ),
+        ],
+      ),
       body: body,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        items: const[
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Products"),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: "Cart"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: "Cart",
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.verified_user), label: "Profile")
         ],
         selectedItemColor: Colors.amber[800],
-        onTap: (index){
+        onTap: (index) {
           setState(() {
-                      _currentIndex = index;
-                    });
+            _currentIndex = index;
+          });
         },
       ),
     );
