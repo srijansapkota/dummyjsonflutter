@@ -1,4 +1,4 @@
-import 'package:dummyjson/model/data_model.dart';
+import 'package:dummyjson/model/product_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
