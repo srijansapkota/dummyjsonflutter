@@ -1,4 +1,5 @@
 import 'package:dummyjson/controllers/product_controller.dart';
+import 'package:dummyjson/screen/product_detail_screen.dart';
 import 'package:dummyjson/widget/product_card.dart';
 import 'package:flutter/material.dart';
 
@@ -85,7 +86,12 @@ class _ProductScreenState extends State<ProductScreen> {
     }
 
     return Scaffold(
-      body: SafeArea(
+      body: GestureDetector(
+        onTap: (){
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_)=> ProductDetailScreen(product: _controller.products))
+          )
+        },
         child: CustomScrollView(
           controller: _scrollController,
           slivers: [
