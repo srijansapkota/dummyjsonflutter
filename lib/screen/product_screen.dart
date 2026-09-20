@@ -1,5 +1,4 @@
 import 'package:dummyjson/controllers/product_controller.dart';
-import 'package:dummyjson/screen/product_detail_screen.dart';
 import 'package:dummyjson/widget/product_card.dart';
 import 'package:flutter/material.dart';
 
