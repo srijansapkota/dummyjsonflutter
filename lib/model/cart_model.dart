@@ -14,8 +14,9 @@ class CartModel {
   factory CartModel.fromJson(Map<String, dynamic> json) {
     return CartModel(
       carts: List<Cart>.from(
-        (json['carts'] as List)
-            .map((e) => Cart.fromJson(e as Map<String, dynamic>)),
+        (json['carts'] as List).map(
+          (e) => Cart.fromJson(e as Map<String, dynamic>),
+        ),
       ),
       total: json['total'] as int,
       skip: json['skip'] as int,
@@ -35,7 +36,7 @@ class CartModel {
 
 class Cart {
   final int id;
-  final List<Product> products;
+  final List<CartProduct> products;
   final double total;
   final double discountedTotal;
   final int userId;
@@ -55,9 +56,10 @@ class Cart {
   factory Cart.fromJson(Map<String, dynamic> json) {
     return Cart(
       id: json['id'] as int,
-      products: List<Product>.from(
-        (json['products'] as List)
-            .map((e) => Product.fromJson(e as Map<String, dynamic>)),
+      products: List<CartProduct>.from(
+        (json['products'] as List).map(
+          (e) => CartProduct.fromJson(e as Map<String, dynamic>),
+        ),
       ),
       total: (json['total'] as num).toDouble(),
       discountedTotal: (json['discountedTotal'] as num).toDouble(),
@@ -80,7 +82,7 @@ class Cart {
   }
 }
 
-class Product {
+class CartProduct {
   final int id;
   final String title;
   final double price;
@@ -90,7 +92,7 @@ class Product {
   final double discountedTotal;
   final String thumbnail;
 
-  Product({
+  CartProduct({
     required this.id,
     required this.title,
     required this.price,
@@ -101,15 +103,14 @@ class Product {
     required this.thumbnail,
   });
 
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
+  factory CartProduct.fromJson(Map<String, dynamic> json) {
+    return CartProduct(
       id: json['id'] as int,
       title: json['title'] as String,
       price: (json['price'] as num).toDouble(),
       quantity: json['quantity'] as int,
       total: (json['total'] as num).toDouble(),
-      discountPercentage:
-          (json['discountPercentage'] as num).toDouble(),
+      discountPercentage: (json['discountPercentage'] as num).toDouble(),
       discountedTotal: (json['discountedTotal'] as num).toDouble(),
       thumbnail: json['thumbnail'] as String,
     );

@@ -85,27 +85,25 @@ class _ProductScreenState extends State<ProductScreen> {
     }
 
     return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            SliverAppBar(
-              title: const Text(
-                "Dummy Json Product Fetch",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              floating: true,
-              snap: true,
-              actions: [
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.search),
-                )
-              ],
+      body: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          SliverAppBar(
+            title: const Text(
+              "Dummy Json Product Fetch",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            bodyContent,
-          ],
-        ),
+            floating: true,
+            snap: true,
+            actions: [
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.search),
+              )
+            ],
+          ),
+          bodyContent,
+        ],
       ),
     );
   }
